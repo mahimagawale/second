@@ -1,0 +1,21 @@
+SET @range=1000;
+SELECT GROUP_CONCAT(R2.n SEPARATOR '&')
+FROM(
+         SELECT @ctr2:=@ctr2+1 "n"
+    from information_schema.tables R2IS1,
+    information_schema.tables R2IS2,
+    (SELECT @ctr2:=1)I2
+    where @ctr2<@range
+   )R2
+   where not exists(
+   select R1.n
+       from(
+       select @ctr1:=@ctr1+1 "n"
+           from  information_schema.tables R1IS1,
+          information_schema.tables R1IS2,
+           (SELECT @CTR1:=1)I1
+           WHERE @ctr1<@range
+       )R1
+       where R2.n%R1.n=0 AND R2.n>R1.n
+   
+   )
